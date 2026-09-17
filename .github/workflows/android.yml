@@ -1,4 +1,5 @@
 name: Build Android APK
+
 on:
   push:
     branches: [ "main", "master" ]
@@ -12,10 +13,8 @@ jobs:
       - name: Unzip project files
         run: |
           unzip -o AICalendar.zip
-          # Если файлы распаковались в подпапку, перемещаем их в корень
           if [ -d "AICalendar" ]; then
-            mv AICalendar/* . 2>/dev/null || true
-            mv AICalendar/.* . 2>/dev/null || true
+            cp -r AICalendar/* .
           fi
 
       - name: Set up JDK 17
@@ -23,6 +22,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Enable AndroidX
+        run: |
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
 
       - name: Setup Gradle Wrapper
         run: gradle wrapper
